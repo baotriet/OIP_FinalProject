@@ -99,8 +99,8 @@ from tkinter.filedialog import askopenfilename
 #     return img, imgRED, imgGREEN, imgBLUE
 
 def crop_levels(imgINT):
-    '''helper function to crop all levels back into the 0...65536 region'''
-    imgINT[imgINT>=65536]=65536
+    '''helper function to crop all levels back into the 0...65535 region'''
+    imgINT[imgINT>=65535]=65535
     imgINT[imgINT<=0]=0
     return imgINT 
 
@@ -132,11 +132,11 @@ def crop_levels(imgINT):
 # HISTOGRAM GENERATION: 
 # ------------------------------------
 
-# def hist256(imgint8):
+# def hist65535(imgint16):
 #     ''' manual histogram creation for uint8 coded intensity images'''
-#     hist = np.zeros(255)
-#     for cnt in range(255):
-#          hist[cnt] = np.sum(imgint8==cnt)
+#     hist = np.zeros(65535)
+#     for cnt in range(65535):
+#          hist[cnt] = np.sum(imgint16==cnt)
 #     return(hist)
     
 # def cum_hist256(imgint8):
@@ -152,11 +152,11 @@ def crop_levels(imgINT):
     
 def threshold(imgINT,ath):
     imgTH = np.zeros(imgINT.shape)
-    imgTH[imgINT >= ath] = 65536
+    imgTH[imgINT >= ath] = 65535
     return imgTH.astype(np.uint16)
 
 def threshold2(imgINT,ath):
-    return ((imgINT >= ath)*65536).astype(np.uint16)
+    return ((imgINT >= ath)*65535).astype(np.uint16)
     
 
 def threshold_binary(imgINT,ath):
@@ -177,13 +177,13 @@ def adjust_contrast(img,a):
     return imgC.astype(np.uint16)
 
 def invert_intensity(img):
-    return 65536-img
+    return 65535-img
 
-def auto_contrast65536(img):
+def auto_contrast65535(img):
     alow = np.min(img)
     ahigh = np.max(img)
     amin = 0.
-    amax = 65536.
+    amax = 65535.
     return (amin + (img.astype(np.float) - alow) * (amax - amin) / (ahigh - alow)).astype(np.uint16)
 
 # def equalise_histogram256(img):
@@ -319,7 +319,7 @@ def filter_image(I,H):
     # Convolution-based filtering: 
     Filtered = conv2(np.double(I),np.double(H));    
     # Reducing to original size and converting back to uint16: 
-    # and CUT to the range between 0 and 65536.
+    # and CUT to the range between 0 and 65535.
     return (crop_levels(Filtered)).astype(np.uint16)
 
 def filter_image_float(I,H):   
@@ -993,7 +993,7 @@ def SequentialLabeling(imgBIN):
     I = deepcopy(imgBIN)
     
     # STEP 1 - ASSIGN INITIAL LABELS: 
-    N, M  = imgBIN.shape
+    M, N  = imgBIN.shape
     label = 2
     R = [] # Create the sequence of 1-element lists on the fly... 
     C = [] # List of label collisions 
@@ -1167,7 +1167,7 @@ def LocalMaxima(img):
 
 ## SIMPLE: 
     
-def plot_image(I, title='Intensity Image', cmap='gray', vmax=65536, vmin=0):
+def plot_image(I, title='Intensity Image', cmap='gray', vmax=65535, vmin=0):
     ''' plot the intensity image: '''
     fig, ax = plt.subplots(figsize=(10,10))
     plti = ax.imshow(I, cmap=cmap, vmax=vmax, vmin=vmin)
@@ -1180,7 +1180,7 @@ def plot_image(I, title='Intensity Image', cmap='gray', vmax=65536, vmin=0):
 #     fig, ax = plt.subplots()
 #     ax.set_xlabel('intensity level')
 #     ax.set_ylabel('number of pixels', color=color) 
-#     plth = ax.stem(hist256(I), color, markerfmt=' ', basefmt=' ')
+#     plth = ax.stem(hist65535(I), color, markerfmt=' ', basefmt=' ')
 #     ax.set_title(title)
 #     return fig, ax, plth
 
@@ -1195,7 +1195,7 @@ def plot_image(I, title='Intensity Image', cmap='gray', vmax=65536, vmin=0):
 
 # COMBINED PLOTTING: 
 
-# def plot_image_hist_cumhist(I, title='Intensity Image', cmap='gray', vmax=65536, vmin=0):
+# def plot_image_hist_cumhist(I, title='Intensity Image', cmap='gray', vmax=65535, vmin=0):
 #     ''' function for the combined plotting of the intensity image, its histogram
 #     and the cumulative histogram. The histograms are wrapped in a single plot, 
 #     but since the scales are different, we introduce two y axes (left and right, 
@@ -1225,7 +1225,7 @@ def plot_image(I, title='Intensity Image', cmap='gray', vmax=65536, vmin=0):
     
 #     return fig, ax1, ax2, ax3, plti, plth, pltch
 
-# def plot_image_all_hists(img, title='Combined Histograms', cmap="gray", vmax=65536, vmin=0):
+# def plot_image_all_hists(img, title='Combined Histograms', cmap="gray", vmax=65535, vmin=0):
 #     ''' combined function for plotting the intensity image next to
 #     * all component histograms, 
 #     * the intensity histogram and the 
